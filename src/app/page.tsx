@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { api } from "~/trpc/react";
 import { UserButton, useUser } from "@clerk/nextjs";
+import { PostView } from "./_components/post-view";
 
 const CreatePostWizard = () => {
   const { user } = useUser();
@@ -55,10 +56,8 @@ export default function Home() {
           <CreatePostWizard />
         </div>
         <div className="flex flex-col">
-          {getPosts.data?.map(({ post, author }) => (
-            <div key={post.id} className="border-b border-slate-400 p-8">
-              {post.content}
-            </div>
+          {getPosts.data?.map((postWithAuthor) => (
+            <PostView key={postWithAuthor.post.id} {...postWithAuthor} />
           ))}
         </div>
       </div>
