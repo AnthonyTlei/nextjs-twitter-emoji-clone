@@ -4,6 +4,7 @@ import { useState } from "react";
 import { api } from "~/trpc/react";
 import { UserButton, useUser } from "@clerk/nextjs";
 import { PostView } from "./_components/post-view";
+import { LoadingPage } from "./_components/loading";
 
 const CreatePostWizard = () => {
   const { user } = useUser();
@@ -39,14 +40,34 @@ const CreatePostWizard = () => {
   );
 };
 
-export default function Home() {
+const Feed = () => {
   const getPosts = api.posts.getAll.useQuery();
 
   if (getPosts.error) {
     return <div>Error: {getPosts.error.message}</div>;
   }
+
   if (getPosts.isLoading) {
-    return <div>Loading...</div>;
+    return <LoadingPage />;
+  }
+
+  return (
+    <div className="flex flex-col">
+      {getPosts.data?.map((postWithAuthor) => (
+        <PostView key={postWithAuthor.post.id} {...postWithAuthor} />
+      ))}
+    </div>
+  );
+};
+
+export default function Home() {
+  const { user, isLoaded: userLoaded } = useUser();
+
+  // Early fetch, since the first request will cache
+  api.posts.getAll.useQuery();
+
+  if (!userLoaded) {
+    return <div />;
   }
 
   return (
@@ -55,11 +76,7 @@ export default function Home() {
         <div className="flex border-b border-slate-400 p-4">
           <CreatePostWizard />
         </div>
-        <div className="flex flex-col">
-          {getPosts.data?.map((postWithAuthor) => (
-            <PostView key={postWithAuthor.post.id} {...postWithAuthor} />
-          ))}
-        </div>
+        <Feed />
       </div>
     </main>
   );
