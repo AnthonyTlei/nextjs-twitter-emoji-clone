@@ -4,7 +4,8 @@ import { useState } from "react";
 import { api } from "~/trpc/react";
 import { UserButton, useUser } from "@clerk/nextjs";
 import { PostView } from "./_components/post-view";
-import { LoadingPage } from "./_components/loading";
+import { LoadingPage, LoadingSpinner } from "./_components/loading";
+import toast from "react-hot-toast";
 
 const CreatePostWizard = () => {
   const [input, setInput] = useState("");
@@ -14,6 +15,21 @@ const CreatePostWizard = () => {
     onSuccess: () => {
       setInput("");
       ctx.posts.getAll.invalidate();
+    },
+    onError: (err) => {
+      const errorMessage =
+        err.data?.zodError?.fieldErrors.content || err.data?.code;
+      if (
+        errorMessage &&
+        typeof errorMessage === "string" &&
+        errorMessage === "TOO_MANY_REQUESTS"
+      ) {
+        toast.error("You are posting too fast, slow down!");
+      } else if (errorMessage && errorMessage[0]) {
+        toast.error(errorMessage[0]);
+      } else {
+        toast.error("Failed to create post");
+      }
     },
   });
 
@@ -50,7 +66,14 @@ const CreatePostWizard = () => {
         }}
         disabled={isPosting}
       />
-      <button onClick={() => mutate({ content: input })}>Post</button>
+      {input !== "" && !isPosting && (
+        <button onClick={() => mutate({ content: input })}>Post</button>
+      )}
+      {isPosting && (
+        <div className="flex items-center justify-center">
+          <LoadingSpinner size={20} />
+        </div>
+      )}
     </div>
   );
 };
