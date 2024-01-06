@@ -7,9 +7,15 @@ import { PostView } from "./_components/post-view";
 import { LoadingPage } from "./_components/loading";
 
 const CreatePostWizard = () => {
-  const { user } = useUser();
-
   const [input, setInput] = useState("");
+  const { user } = useUser();
+  const ctx = api.useUtils();
+  const { mutate, isLoading: isPosting } = api.posts.create.useMutation({
+    onSuccess: () => {
+      setInput("");
+      ctx.posts.getAll.invalidate();
+    },
+  });
 
   if (!user) {
     return null;
@@ -34,8 +40,17 @@ const CreatePostWizard = () => {
         type="text"
         value={input}
         onChange={(e) => setInput(e.target.value)}
-        disabled={false}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            if (input !== "") {
+              mutate({ content: input });
+            }
+          }
+        }}
+        disabled={isPosting}
       />
+      <button onClick={() => mutate({ content: input })}>Post</button>
     </div>
   );
 };
