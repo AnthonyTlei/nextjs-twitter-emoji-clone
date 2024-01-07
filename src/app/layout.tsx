@@ -27,10 +27,14 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body className={`font-sans ${inter.variable}`}>
-          <TRPCReactProvider cookies={cookies().toString()}>
-            <Toaster position="bottom-center" />
-            {children}
-          </TRPCReactProvider>
+          <main className="overflow-none flex h-screen justify-center">
+            <div className="flex h-full w-full flex-col border-x border-slate-400 md:max-w-2xl">
+              <TRPCReactProvider cookies={cookies().toString()}>
+                <Toaster position="bottom-center" />
+                {children}
+              </TRPCReactProvider>
+            </div>
+          </main>
         </body>
       </html>
     </ClerkProvider>

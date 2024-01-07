@@ -109,13 +109,11 @@ export default function Home() {
   }
 
   return (
-    <main className="flex h-screen justify-center">
-      <div className="h-full w-full border-x border-slate-400 md:max-w-2xl">
-        <div className="flex border-b border-slate-400 p-4">
-          <CreatePostWizard />
-        </div>
-        <Feed />
+    <div>
+      <div className="flex border-b border-slate-400 p-4">
+        <CreatePostWizard />
       </div>
-    </main>
+      <Feed />
+    </div>
   );
 }
