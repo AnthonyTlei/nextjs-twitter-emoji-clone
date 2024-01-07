@@ -4,11 +4,12 @@
  */
 await import("./src/env.js");
 
+import withPWA from "next-pwa";
+
 /** @type {import("next").NextConfig} */
-const withPWA = require("next-pwa");
 const config = {
-  // @ts-ignore
   ...withPWA({
+    // @ts-ignore
     pwa: {
       dest: "public",
       register: true,
