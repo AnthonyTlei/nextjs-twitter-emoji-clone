@@ -1,5 +1,3 @@
-import { clerkClient } from "@clerk/nextjs";
-import { User } from "@clerk/nextjs/server";
 import { TRPCError } from "@trpc/server";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
@@ -10,11 +8,10 @@ import {
   publicProcedure,
 } from "~/server/api/trpc";
 import { addUserDataToPosts } from "~/server/helpers/addUserDataToPost";
-import { filterUserForClient } from "~/server/helpers/filterUserForClient";
 
 const ratelimit = new Ratelimit({
   redis: Redis.fromEnv(),
-  limiter: Ratelimit.slidingWindow(3, "1 h"),
+  limiter: Ratelimit.slidingWindow(3, "24 h"),
   analytics: true,
 });
 
@@ -67,7 +64,7 @@ export const postsRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const authorId = ctx.currentUser.id;
       const { success } = await ratelimit.limit(authorId);
-      if (!success) {
+      if (!success && ctx.currentUser.username !== process.env.ADMIN_USERNAME) {
         throw new TRPCError({
           code: "TOO_MANY_REQUESTS",
           message: "Too many requests",
