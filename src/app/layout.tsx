@@ -16,6 +16,8 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Twitter Emoji Clone",
   description: "Express your thoughts with emojis and emojis only!",
+  manifest: "/manifest.json",
+  icons: { apple: "/icon.png" },
 };
 
 export default function RootLayout({

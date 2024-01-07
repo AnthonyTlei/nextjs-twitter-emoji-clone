@@ -5,7 +5,16 @@
 await import("./src/env.js");
 
 /** @type {import("next").NextConfig} */
+const withPWA = require("next-pwa");
 const config = {
+  // @ts-ignore
+  ...withPWA({
+    pwa: {
+      dest: "public",
+      register: true,
+      skipWaiting: true,
+    },
+  }),
   images: {
     remotePatterns: [{ hostname: "img.clerk.com" }],
   },
