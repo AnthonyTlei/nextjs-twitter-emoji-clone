@@ -28,6 +28,12 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
+        <head>
+          <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, height=device-height viewport-fit=cover"
+          />
+        </head>
         <body className={`font-sans ${inter.variable}`}>
           <main className="overflow-none flex h-screen justify-center">
             <div className="flex h-full w-full flex-col border-x border-slate-400 md:max-w-2xl">
