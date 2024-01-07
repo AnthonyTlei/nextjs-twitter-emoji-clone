@@ -2,6 +2,7 @@ import React, { cache } from "react";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { api } from "~/trpc/server";
+import { PostView } from "~/app/_components/post-view";
 
 interface SinglePostPageProps {
   params: {
@@ -28,7 +29,11 @@ export async function generateMetadata({
     notFound();
   }
   return {
-    title: postWithAuthor.author.username + " 's Post - Twitter Emoji Clone",
+    title:
+      postWithAuthor.author.username +
+      " - " +
+      postWithAuthor.post.content +
+      " - Twitter Emoji Clone",
     description: "Post by " + postWithAuthor.author.username,
     openGraph: {
       images: [{ url: postWithAuthor.author.profileImageUrl }],
@@ -36,8 +41,13 @@ export async function generateMetadata({
   };
 }
 
-const SinglePostPage = () => {
-  return <div>Single Post Page</div>;
+const SinglePostPage = async ({ params: { id } }: SinglePostPageProps) => {
+  const postWithAuthor = await getPostWithAuthorById(id);
+  if (!postWithAuthor) {
+    notFound();
+  }
+
+  return <PostView {...postWithAuthor} />;
 };
 
 export default SinglePostPage;
